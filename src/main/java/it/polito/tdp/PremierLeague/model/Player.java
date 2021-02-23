@@ -53,6 +53,4 @@ public class Player {
 		return playerID + " - " + name;
 	}
 	
-	
-	
 }

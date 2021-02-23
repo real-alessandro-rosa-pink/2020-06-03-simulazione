@@ -5,9 +5,13 @@
 package it.polito.tdp.PremierLeague;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.PremierLeague.model.Model;
+import it.polito.tdp.PremierLeague.model.Player;
+import it.polito.tdp.PremierLeague.model.PlayerPeso;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -44,17 +48,55 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	txtResult.clear();
+    	
+    	Double mediaGolPartitaInteger;
+    	String mediaGolPartitaString = this.txtGoals.getText();
+    	try {
+    		mediaGolPartitaInteger = Double.parseDouble(mediaGolPartitaString);
+    	} catch(NumberFormatException nfe) {
+    		txtResult.appendText("ERRORE : formato della media gol per partita non valido\n");
+    		return ;
+    	}
+    	
+    	txtResult.appendText(this.model.creaGrafo(mediaGolPartitaInteger));
+    	
+    	this.btnTopPlayer.setDisable(false);
+    	this.btnDreamTeam.setDisable(false);
+    	this.txtK.setDisable(false);
     }
 
     @FXML
     void doDreamTeam(ActionEvent event) {
-
+    	txtResult.appendText("DETERMINAZIONE DEL DREAM TEAM\n\n");
+    	
+    	String numeroGiocatoriString = this.txtK.getText();
+    	Integer numeroGiocatoriInteger;
+    	try {
+    		numeroGiocatoriInteger = Integer.parseInt(numeroGiocatoriString);
+    	} catch(NumberFormatException nfe) {
+    		txtResult.appendText("ERRORE : Formato del numero di giocatori non valido\n");
+    		return ;
+    	}
+    	
+    	for( Player dt : this.model.dreamTeam(numeroGiocatoriInteger) ) {
+    		txtResult.appendText(dt.toString()+"\n");
+    	}
+    	
+    	this.txtResult.appendText("\nGrado titolarità: "+this.model.getGradoTitolarita()+"\n");
     }
 
     @FXML
     void doTopPlayer(ActionEvent event) {
-
+    	txtResult.appendText("TOP PLAYER: "+this.model.topPlayer().toString()+"\n\n");
+    	
+    	List<PlayerPeso> topPlayerBattuti = new ArrayList<>();
+    	topPlayerBattuti = this.model.topPlayerBattuti();
+    	
+    	for( PlayerPeso pp : topPlayerBattuti ) {
+    		txtResult.appendText(pp.toString()+"\n");
+    	}
+    	
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -70,5 +112,8 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.btnTopPlayer.setDisable(true);
+    	this.btnDreamTeam.setDisable(true);
+    	this.txtK.setDisable(true);
     }
 }
